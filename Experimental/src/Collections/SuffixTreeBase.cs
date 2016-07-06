@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using CodeJam.Utility;
+
 using JetBrains.Annotations;
 
 namespace CodeJam.Collections
@@ -75,8 +78,39 @@ namespace CodeJam.Collections
 			BuildFor(begin, InternalData.Length);
 		}
 
-		/// <summary>Appends suffixes for the last added string</summary>
-	    protected abstract void BuildFor(int begin, int end);
+        /// <summary>Checks whether the tree containg a suffix matching the given mask</summary>
+        /// <param name="mask">
+        /// The suffix mask
+        /// <remarks>Could include * and ? wildcards</remarks>
+        /// </param>
+        /// <returns>true if a match has been found, false otherwise</returns>
+        [PublicAPI]
+        public bool Contains([NotNull]string mask)
+        {
+            Code.NotNull(mask, nameof(mask));
+            if (mask == string.Empty)
+            {
+                return true;
+            }
+            return Contains(new Mask(mask));
+        }
+
+        /// <summary>Checks whether the tree containg a suffix matching the given mask</summary>
+        /// <param name="mask">The suffix mask</param>
+        /// <returns>true if a match has been found, false otherwise</returns>
+        [PublicAPI]
+        public bool Contains([NotNull] Mask mask)
+        {
+            Code.NotNull(mask, nameof(mask));
+            if (mask.Symbols.Count == 0 || mask.MatchesAnyString)
+            {
+                return true;
+            }
+            throw new NotImplementedException();
+        }
+
+        /// <summary>Appends suffixes for the last added string</summary>
+        protected abstract void BuildFor(int begin, int end);
 
 		/// <summary>Creates a comparer for nodes against a char</summary>
 		/// <returns>The comparer</returns>
